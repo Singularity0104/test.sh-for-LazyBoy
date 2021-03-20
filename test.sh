@@ -29,52 +29,59 @@ tmp=`grep "repeat" $CONFIG`
 repeat=${tmp#*:}
 for file in *.c
 do
-    fname="${file%.*}"
-    fnamelist[$c]="$fname"
-    icc -pthread $file -o $BIN_DIR$fname
-    echo "Compiled Successfully! $file"
-    echo "Submitting..."
-    for((j=start_thread_num;j<=end_thread_num;j=j+stride))
-    do
-	for((k=1;k<=repeat;k++))
-	do
-            test -d $PBS_DIR$fname/ || mkdir $PBS_DIR$fname/
-            cp $TEMPLATE $PBS_DIR$fname/$fname-$j-$k.pbs
-            replace="s/T_NUM/$j/g"
-            sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
-            replace="s/TESTFILE_NAME/$fname/g"
-            sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
-            replace="s/TESTFILE/.\/bin\/$fname/g"
-            sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
-	    replace="s/ARGS/$args/g"
-	    sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
-            replace="s/RUNLOG/.\/runlog\/$fname-$j-$k.log/g"
-            sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
-            this_id=`qsub $PBS_DIR$fname/$fname-$j-$k.pbs`
-	    id[id_index]="${this_id%.*}"
-	    file_to_id[id_index]=$fname-$j-$k.log
-	    ((id_index++))
-        done
-    done
+fname="${file%.*}"
+fnamelist[$c]="$fname"
+icc -pthread $file -o $BIN_DIR$fname
+echo "Compiled Successfully! $file"
+echo "Submitting..."
+for((j=start_thread_num;j<=end_thread_num;j=j+stride))
+do
+for((k=1;k<=repeat;k++))
+do
+test -d $PBS_DIR$fname/ || mkdir $PBS_DIR$fname/
+cp $TEMPLATE $PBS_DIR$fname/$fname-$j-$k.pbs
+replace="s/T_NUM/$j/g"
+sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
+replace="s/TESTFILE_NAME/$fname/g"
+sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
+replace="s/TESTFILE/.\/bin\/$fname/g"
+sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
+replace="s/ARGS/$args/g"
+sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
+replace="s/RUNLOG/.\/runlog\/$fname-$j-$k.log/g"
+sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
+this_id=`qsub $PBS_DIR$fname/$fname-$j-$k.pbs`
+id[id_index]="${this_id%.*}"
+file_to_id[id_index]=$fname-$j-$k.log
+((id_index++))
+done
+done
 done
 echo
 echo "Information:"
 for((i=0;i<id_index;i++))
 do
-    echo "${file_to_id[$i]%.*}	id: ${id[$i]}"
+echo "${file_to_id[$i]%.*}	id: ${id[$i]}"
 done
 echo
 echo "Running..."
-flag=false
-until $flag
+all_flag=false
+sin_flag=true
+until $all_flag
 do
-    for((i=0;i<id_index;i++))
-    do
-	if test -f $RUNLOG_DIR${file_to_id[$i]}
-	then
-	    flag=true
-        fi
-    done
+sin_flag=true
+for((i=0;i<id_index;i++))
+do
+if ! test -f $RUNLOG_DIR${file_to_id[$i]}
+then
+sin_flag=false
+fi
+done
+if $sin_flag
+then
+all_flag=true
+fi
+sleep 1
 done
 sleep 1
 echo
@@ -82,15 +89,15 @@ echo "Extracting Time Information..."
 sleep 1
 for((i=0;i<id_index;i++))
 do
-    echo ${file_to_id[$i]%.*} >> $OUT_DATA
-    until find *${id[$i]}* > /dev/null 2>&1
-    do
-        sleep 1
-    done
-    a=`find *${id[$i]}*`
-    echo $a
-    time_log_name=`find *${id[$i]}*`
-    grep "real" $time_log_name >> $OUT_DATA
+echo ${file_to_id[$i]%.*} >> $OUT_DATA
+until find *${id[$i]}* > /dev/null 2>&1
+do
+sleep 1
+done
+a=`find *${id[$i]}*`
+echo $a
+time_log_name=`find *${id[$i]}*`
+grep "real" $time_log_name >> $OUT_DATA
 done
 mv *.o* $TIMELOG_DIR
 echo "Finished!"
