@@ -27,8 +27,12 @@ tmp=`grep "args" $CONFIG`
 args=${tmp#*:}
 tmp=`grep "repeat" $CONFIG`
 repeat=${tmp#*:}
-for file in *.c
+for file in *.c *.cpp
 do
+if [ $file = "*.c" -o $file = "*.cpp" ]
+then
+continue
+fi
 fname="${file%.*}"
 fnamelist[$c]="$fname"
 icc -pthread $file -o $BIN_DIR$fname
@@ -94,9 +98,8 @@ until find *${id[$i]}* > /dev/null 2>&1
 do
 sleep 1
 done
-a=`find *${id[$i]}*`
-echo $a
 time_log_name=`find *${id[$i]}*`
+echo $time_log_name
 grep "real" $time_log_name >> $OUT_DATA
 done
 mv *.o* $TIMELOG_DIR
