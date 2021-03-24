@@ -1,5 +1,10 @@
 # test.sh for LazyBoy
 
+> Gitee: https://gitee.com/singularity0104/test.sh-for-LazyBoy.git
+>
+> Github: https://github.com/Singularity0104/test.sh-for-LazyBoy.git
+
+
 ### 你终于点进来了！
 
 + 如果碰巧你也在做TJU的并行计算的作业，是不是感觉命令行真是tmd难使，每次提交任务都烦的一批，还要重复实验，心态爆炸……
@@ -9,6 +14,7 @@
 + 1.0
 + 1.1：修复部分问题
 + 1.2：增加对cpp文件支持，配置文件中args可以设置多个空格隔开的参数
++ 1.2.1：调整部分输出信息
 + 敬请期待……
 
 ### 使用这个脚本只需要这样几步……
@@ -68,7 +74,7 @@
 
 + 任务结束前不要改动运行文件夹内的任何文件。
 
-+ 任务结束后将会输出output.txt，里面记录了每次任务的时间信息。
++ 任务结束后将会输出outdata.txt，里面记录了每次任务的时间信息。
 
   示例如下：
 
