@@ -65,7 +65,7 @@ echo
 echo "Information:"
 for((i=0;i<id_index;i++))
 do
-echo "${file_to_id[$i]%.*}	id: ${id[$i]}"
+echo "id: ${id[$i]} ${file_to_id[$i]%.*}"
 done
 echo
 echo "Running..."
