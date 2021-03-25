@@ -6,6 +6,7 @@ TIMELOG_DIR="./timelog/"
 TEMPLATE="./submit-template.pbs"
 OUT_DATA="./outdata.txt"
 CONFIG="./config"
+NODE_INFO="./node.txt"
 test -d $BIN_DIR && rm -rf $BIN_DIR 
 mkdir $BIN_DIR
 test -d $PBS_DIR && rm -rf $PBS_DIR
@@ -16,6 +17,8 @@ test -d $TIMELOG_DIR && rm -rf $TIMELOG_DIR
 mkdir $TIMELOG_DIR
 test -f $OUT_DATA && rm $OUT_DATA
 touch $OUT_DATA
+test -f $NODE_INFO && rm $NODE_INFO
+touch $NODE_INFO
 id_index=0
 tmp=`grep "start_thread_num" $CONFIG`
 start_thread_num=${tmp#*:}
@@ -57,39 +60,44 @@ sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
 this_id=`qsub $PBS_DIR$fname/$fname-$j-$k.pbs`
 id[id_index]="${this_id%.*}"
 file_to_id[id_index]=$fname-$j-$k.log
+echo "id: ${id[id_index]} task: ${file_to_id[id_index]%.*}"
+echo ${id[id_index]} >> $NODE_INFO
 ((id_index++))
 done
 done
 done
 echo
-echo "Information:"
-for((i=0;i<id_index;i++))
-do
-echo "id: ${id[$i]} ${file_to_id[$i]%.*}"
-done
-echo
-echo "Running..."
 all_flag=false
 sin_flag=true
+postfix=('|' '/' '-' '\')
+num=0
 until $all_flag
 do
+let now_num=id_index
 sin_flag=true
 for((i=0;i<id_index;i++))
 do
 if ! test -f $RUNLOG_DIR${file_to_id[$i]}
 then
 sin_flag=false
+let now_num=now_num-1
 fi
 done
+let index=num%4
+printf "Running...%c [%d/%d]\r" "${postfix[$index]}" "$now_num" "$id_index"
+let num=num+1
 if $sin_flag
 then
 all_flag=true
 fi
 sleep 1
 done
+printf "\n"
 sleep 1
 echo
 echo "Extracting Time Information..."
+cat $CONFIG >> $OUT_DATA
+echo >> $OUT_DATA
 sleep 1
 for((i=0;i<id_index;i++))
 do
