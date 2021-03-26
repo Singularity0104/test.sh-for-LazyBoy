@@ -47,16 +47,11 @@ for((k=1;k<=repeat;k++))
 do
 test -d $PBS_DIR$fname/ || mkdir $PBS_DIR$fname/
 cp $TEMPLATE $PBS_DIR$fname/$fname-$j-$k.pbs
-replace="s/T_NUM/$j/g"
-sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
-replace="s/TESTFILE_NAME/$fname/g"
-sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
-replace="s/TESTFILE/.\/bin\/$fname/g"
-sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
-replace="s/ARGS/$args/g"
-sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
-replace="s/RUNLOG/.\/runlog\/$fname-$j-$k.log/g"
-sed -i $replace $PBS_DIR$fname/$fname-$j-$k.pbs
+sed -i "s/T_NUM/$j/g" $PBS_DIR$fname/$fname-$j-$k.pbs
+sed -i "s/TESTFILE_NAME/$fname/g" $PBS_DIR$fname/$fname-$j-$k.pbs
+sed -i "s/TESTFILE/.\/bin\/$fname/g" $PBS_DIR$fname/$fname-$j-$k.pbs
+sed -i "s/ARGS/$args/g" $PBS_DIR$fname/$fname-$j-$k.pbs
+sed -i "s/RUNLOG/.\/runlog\/$fname-$j-$k.log/g" $PBS_DIR$fname/$fname-$j-$k.pbs
 this_id=`qsub $PBS_DIR$fname/$fname-$j-$k.pbs`
 id[id_index]="${this_id%.*}"
 file_to_id[id_index]=$fname-$j-$k.log
