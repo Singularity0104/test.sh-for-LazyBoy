@@ -54,8 +54,8 @@
   repeat:10
   ```
 
-  + max_thread_num：实验的最小线程数
-  + min_thread_num：实验的最大线程数
+  + min_thread_num：实验的最小线程数
+  + max_thread_num：实验的最大线程数
   + args：除了线程数的其他参数（**可以写入多个参数，如果有多个，请用空格隔开。重复！最后一个线程数参数不要写进去**）
   + repeats：重复实验次数
 
