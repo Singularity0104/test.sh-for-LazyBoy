@@ -1,4 +1,18 @@
 #!/bin/bash
+sleep 1
+echo -e "\033[1;35m####################################################################\033[0m"
+echo -e "\033[1;35m  ____          ____  _                   _            _ _         \033[0m"
+echo -e "\033[1;35m | __ ) _   _  / ___|(_)_ __   __ _ _   _| | __ _ _ __(_) |_ _   _ \033[0m"
+echo -e "\033[1;35m |  _ \\| | | | \\___ \\| | '_ \\ / _\` | | | | |/ _\` | '__| | __| | | |\033[0m"
+echo -e "\033[1;35m | |_) | |_| |  ___) | | | | | (_| | |_| | | (_| | |  | | |_| |_| |\033[0m"
+echo -e "\033[1;35m |____/ \\__, | |____/|_|_| |_|\\__, |\\__,_|_|\\__,_|_|  |_|\\__|\\__, |\033[0m"
+echo -e "\033[1;35m        |___/                 |___/                          |___/ \033[0m"
+echo -e "\033[1;35m####################################################################\033[0m"
+echo
+echo -e "\033[1;36mGithub:\033[0m \033[4;36mhttps://github.com/Singularity0104/test.sh-for-LazyBoy.git\033[0m"
+echo -e "\033[1;36mGitee :\033[0m \033[4;36mhttps://gitee.com/singularity0104/test.sh-for-LazyBoy.git\033[0m"
+echo
+sleep 1
 BIN_DIR="./bin/"
 PBS_DIR="./pbs/"
 RUNLOG_DIR="./runlog/"
@@ -20,15 +34,16 @@ touch $OUT_DATA
 test -f $NODE_INFO && rm $NODE_INFO
 touch $NODE_INFO
 id_index=0
-tmp=`grep "start_thread_num" $CONFIG`
+tmp=`grep "min_thread_num:" $CONFIG`
 start_thread_num=${tmp#*:}
-tmp=`grep "end_thread_num" $CONFIG`
+tmp=`grep "max_thread_num:" $CONFIG`
 end_thread_num=${tmp#*:}
-tmp=`grep "stride" $CONFIG`
-stride=${tmp#*:}
-tmp=`grep "args" $CONFIG`
+# tmp=`grep "test_stride:" $CONFIG`
+# stride=${tmp#*:}
+stride=1
+tmp=`grep "args:" $CONFIG`
 args=${tmp#*:}
-tmp=`grep "repeat" $CONFIG`
+tmp=`grep "repeat:" $CONFIG`
 repeat=${tmp#*:}
 for file in *.c *.cpp
 do
@@ -39,8 +54,9 @@ fi
 fname="${file%.*}"
 fnamelist[$c]="$fname"
 icc -pthread $file -o $BIN_DIR$fname
-echo "Compiled Successfully! $file"
-echo "Submitting..."
+echo -e "\033[1;32mCompiled Successfully! \033[0m$file"
+echo
+echo -e "\033[1;32mSubmitting...\033[0m"
 for((j=start_thread_num;j<=end_thread_num;j=j+stride))
 do
 for((k=1;k<=repeat;k++))
@@ -79,7 +95,7 @@ let now_num=now_num-1
 fi
 done
 let index=num%4
-printf "Running...%c [%d/%d]\r" "${postfix[$index]}" "$now_num" "$id_index"
+printf "\033[1;32mRunning...%c [%d/%d]\r\033[0m" "${postfix[$index]}" "$now_num" "$id_index"
 let num=num+1
 if $sin_flag
 then
@@ -90,8 +106,11 @@ done
 printf "\n"
 sleep 1
 echo
-echo "Extracting Time Information..."
-cat $CONFIG >> $OUT_DATA
+echo -e "\033[1;32mExtracting Time Information...\033[0m"
+grep "min_thread_num:" $CONFIG >> $OUT_DATA
+grep "max_thread_num:" $CONFIG >> $OUT_DATA
+grep "args:" $CONFIG >> $OUT_DATA
+grep "repeat:" $CONFIG >> $OUT_DATA
 echo >> $OUT_DATA
 sleep 1
 for((i=0;i<id_index;i++))
@@ -106,4 +125,8 @@ echo $time_log_name
 grep "real" $time_log_name >> $OUT_DATA
 done
 mv *.o* $TIMELOG_DIR
-echo "Finished!"
+echo
+echo -e "\033[1;31mFinished! \033[0m"
+echo
+echo -e "\033[1;34mIf you want to look over all the results, please input \033[0m\033[1;36mcat ./runlog/*\033[0m\033[1;34m.\033[0m"
+echo -e "\033[1;34mIf you want to get the original time information, please get into the timelog folder by \033[0m\033[1;36mcd ./timelog\033[0m\033[1;34m.\033[0m"
