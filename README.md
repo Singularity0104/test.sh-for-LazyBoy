@@ -133,10 +133,10 @@
 + 启动脚本后，脚本会建立这样几个文件或目录
 
   ```
-  |-bin\
-  |-pbs\
-  |-runlog\
-  |-timelog\
+  |-bin/
+  |-pbs/
+  |-runlog/
+  |-timelog/
   |-outdata.txt
   |-node.txt
   ```
