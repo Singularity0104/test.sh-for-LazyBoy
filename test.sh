@@ -11,7 +11,6 @@ echo -e "\033[1;35m#############################################################
 echo
 echo -e "\033[1;36mGithub:\033[0m \033[4;36mhttps://github.com/Singularity0104/test.sh-for-LazyBoy.git\033[0m"
 echo -e "\033[1;36mGitee :\033[0m \033[4;36mhttps://gitee.com/singularity0104/test.sh-for-LazyBoy.git\033[0m"
-echo
 sleep 1
 BIN_DIR="./bin/"
 PBS_DIR="./pbs/"
@@ -38,6 +37,8 @@ tmp=`grep "min_thread_num:" $CONFIG`
 start_thread_num=${tmp#*:}
 tmp=`grep "max_thread_num:" $CONFIG`
 end_thread_num=${tmp#*:}
+tmp=`grep "compiler:" $CONFIG`
+compiler=${tmp#*:}
 # tmp=`grep "test_stride:" $CONFIG`
 # stride=${tmp#*:}
 stride=1
@@ -53,9 +54,21 @@ continue
 fi
 fname="${file%.*}"
 fnamelist[$c]="$fname"
-icc -pthread $file -o $BIN_DIR$fname
-echo -e "\033[1;32mCompiled Successfully! \033[0m$file"
+if [ $compiler = 0 ]
+then
+compiling="icc -pthread $file -o $BIN_DIR$fname"
+running="TESTFILE ARGS \$procs"
+elif [ $compiler = 1 ]
+then
+compiling="mpiicpc $file -o $BIN_DIR$fname"
+running="mpirun -np \$procs TESTFILE ARGS"
+else
+echo -e "\033[1;31mERROR!\033[0m"
+exit 1
+fi
+$compiling
 echo
+echo -e "\033[1;32mCompiled Successfully! \033[0m$file"
 echo -e "\033[1;32mSubmitting...\033[0m"
 for((j=start_thread_num;j<=end_thread_num;j=j+stride))
 do
@@ -64,6 +77,7 @@ do
 test -d $PBS_DIR$fname/ || mkdir $PBS_DIR$fname/
 cp $TEMPLATE $PBS_DIR$fname/$fname-$j-$k.pbs
 sed -i "s/T_NUM/$j/g" $PBS_DIR$fname/$fname-$j-$k.pbs
+sed -i "s/RUNNING/$running/g" $PBS_DIR$fname/$fname-$j-$k.pbs
 sed -i "s/TESTFILE_NAME/$fname/g" $PBS_DIR$fname/$fname-$j-$k.pbs
 sed -i "s/TESTFILE/.\/bin\/$fname/g" $PBS_DIR$fname/$fname-$j-$k.pbs
 sed -i "s/ARGS/$args/g" $PBS_DIR$fname/$fname-$j-$k.pbs
@@ -130,3 +144,4 @@ echo -e "\033[1;31mFinished! \033[0m"
 echo
 echo -e "\033[1;34mIf you want to look over all the results, please input \033[0m\033[1;36mcat ./runlog/*\033[0m\033[1;34m.\033[0m"
 echo -e "\033[1;34mIf you want to get the original time information, please get into the timelog folder by \033[0m\033[1;36mcd ./timelog\033[0m\033[1;34m.\033[0m"
+echo

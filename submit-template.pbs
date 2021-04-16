@@ -4,4 +4,4 @@
 #PBS -j oe
 cd $PBS_O_WORKDIR
 procs=$(cat $PBS_NODEFILE | wc -l)
-time TESTFILE ARGS $procs >& RUNLOG
+time RUNNING >& RUNLOG
