@@ -49,56 +49,56 @@
 
   + 版本>=1.5示例
 
-  ```
-  # compiler choices
-  # [0]: icc -pthread
-  # [1]: mpiicpc
-  compiler:1
-  min_thread_num:1
-  max_thread_num:16
-  args:100 100
-  repeat:10
-  ```
+  	```
+  	# compiler choices
+  	# [0]: icc -pthread
+  	# [1]: mpiicpc
+  	compiler:1
+  	min_thread_num:1
+  	max_thread_num:16
+  	args:100 100
+  	repeat:10
+  	```
 
-  + compiler：编译器选择
-  + min_thread_num：实验的最小线程数
-  + max_thread_num：实验的最大线程数
-  + args：参数（**可以写入多个参数，如果有多个，请用空格隔开。如果使用icc编译，最后一个线程数参数不要写进去！！！**）
-  + repeats：重复实验次数
+  	+ compiler：编译器选择
+  	+ min_thread_num：实验的最小线程数
+  	+ max_thread_num：实验的最大线程数
+  	+ args：参数（**可以写入多个参数，如果有多个，请用空格隔开。如果使用icc编译，最后一个线程数参数不要写进去！！！**）
+  	+ repeats：重复实验次数
 
   
 
   + 版本1.4示例
 
-  ```
-  min_thread_num:1
-  max_thread_num:16
-  args:100 100
-  repeat:10
-  ```
+  	```
+  	min_thread_num:1
+  	max_thread_num:16
+  	args:100 100
+  	repeat:10
+  	```
 
-  + min_thread_num：实验的最小线程数
-  + max_thread_num：实验的最大线程数
-  + args：除了线程数的其他参数（**可以写入多个参数，如果有多个，请用空格隔开。重复！最后一个线程数参数不要写进去**）
-  + repeats：重复实验次数
+  	+ min_thread_num：实验的最小线程数
+  	+ max_thread_num：实验的最大线程数
+  	+ args：除了线程数的其他参数（**可以写入多个参数，如果有多个，请用空格隔开。重复！最后一个线程数参数不要写进去**）
+  	+ repeats：重复实验次数
 
   
 
   + 版本<1.4示例
-
-  ```
-  start_thread_num:1
-  end_thread_num:4
-  stride:1
-  args:100
-  repeat:2
-  ```
-
-  + start_thread_num：实验的最小线程数
-  + end_thread_num：实验的最大线程数
-  + stride：线程步长
-  + args：除了线程数的其他参数（**可以写入多个参数，如果有多个，请用空格隔开。重复！最后一个线程数参数不要写进去**）
-  + repeats：重复实验次数
+	
+  	```
+  	start_thread_num:1
+  	end_thread_num:4
+  	stride:1
+  	args:100
+  	repeat:2
+  	```
+	
+  	+ start_thread_num：实验的最小线程数
+  	+ end_thread_num：实验的最大线程数
+  	+ stride：线程步长
+  	+ args：除了线程数的其他参数（**可以写入多个参数，如果有多个，请用空格隔开。重复！最后一个线程数参数不要写进去**）
+  	+ repeats：重复实验次数
 
 + 检查pbs模板是否符合你的实验，只要你使用实验示例的规范，就不会出大问题。
 
